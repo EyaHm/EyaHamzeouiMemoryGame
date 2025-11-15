@@ -7,25 +7,34 @@
     <title>Memory Game</title>
 </head>
 <body>
+    <!--  Title & Music -->
+  <div class="top-header">
+    <h1>🎮 Memory Game</h1>
+    <label class="music-icon" id="musicToggle">
+      <img src="music-notes.png" alt="Musique On/Off" id="musicIcon" width="40" height="40">
+    </label>
+  </div>
+  <!-- Game Container -->
   <div class="game-container">
-    <header class="header">
-      <h1>🎮 Memory Game</h1>
-      <div class="info">
-        <span class="score">Score: 0</span>
-        <button class="restart"> Rejouer</button>
+    <header>
+      <div class="top-bar">
+        <p id="timer" class="timer">⏱</p>
+      </div>
+
+      <div class="difficulty">
+        <img src="easy.png" data-level="easy" alt="Easy" >
+        <img src="medium.png" data-level="medium" alt="Medium" class="active">
+        <img src="hard.png"  data-level="hard" alt="Hard">
       </div>
     </header>
 
-    <main class="game-board">
-      <div class="card"></div>
-      <div class="card"></div>
-      <div class="card"></div>
-      <div class="card"></div>
-      <div class="card"></div>
-      <div class="card"></div>
-      <div class="card"></div>
-      <div class="card"></div>
-    </main>
+    <main class="game-board"></main>
+
+    <footer >
+      <button class="restart"> Restart</button>
+    </footer>
+
   </div>
+  <script src="script.js"></script>
 </body>
 </html>

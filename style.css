@@ -1,69 +1,188 @@
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'fredoka one', cursive;
+  letter-spacing: 1px;
   background: linear-gradient(135deg, #74b9ff, #0984e3);
   height: 100vh;
   display: flex;
+  flex-direction: column;    
   justify-content: center;
   align-items: center;
+  margin: 0;
 }
 
-/*Container principal */
+/* Container */
 .game-container {
   background-color: white;
   padding: 20px 30px;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  width: 450px;
-  text-align: center;
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Flexbox pour le header */
-.header {
+/* Header with Flexbox */
+.top-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between;  
+  align-items: center;       
+  margin-bottom: 15px;
+  width: 480px;
+  position: relative;        
+}
+.top-header h1 {
+  font-family: 'fredoka one', cursive;
+  font-size: 3em;
+  text-align: left;
+  color: white;
+  text-shadow: 3px 3px 0 black;
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+h1 {
+  animation: wiggle 1s infinite ease-in-out;
+}
+
+
+/*Inside container */
+header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
-.info {
+.top-bar {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  width: 100%;
+  font-weight: bold;
+  font-size: 18px;
+  color: #444444;
 }
 
-/* Grid pour le plateau */
+/*Game board with Grid */
 .game-board {
   display: grid;
-  grid-template-columns: repeat(4, 90px);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   justify-content: center;
+  margin-bottom: 20px;
 }
 
-/* Style des cartes */
 .card {
   width: 90px;
   height: 90px;
-  background-color: #74b9ff;
   border-radius: 10px;
+  position: relative;
   cursor: pointer;
-  transition: transform 0.3s, background-color 0.3s;
+  perspective: 1000px;
+}
+.card .card-front, .card .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+}
+
+/* The BACK of the card (visible first) */
+.card .card-back {
+  background-image: url("card1.png");
+  background-size: cover;
+  background-position: center;
+  border: 2px solid white;
+}
+
+/* The FRONT of the card (shows image) */
+.card .card-front {
+  background-color: white;
+  border: 2px solid #0984e3;
+  transform: rotateY(180deg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card .card-front img {
+  width: 80%;
+  height: 80%;
+  border-radius: 8px;
+  
+}
+
+/* When flipped */
+.card.flip .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
 }
 
 .card:hover {
   transform: scale(1.05);
-  background-color: #0984e3;
+}
+
+
+footer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 button.restart {
   background-color: #0984e3;
   color: white;
   border: none;
-  padding: 6px 12px;
+  padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 16px;
   transition: background-color 0.3s;
 }
-
 button.restart:hover {
   background-color: #74b9ff;
+}
+.music-icon {
+  cursor: pointer;
+  transition: transform 0.2s;
+  filter: brightness(1.5);
+}
+.music-icon:hover {
+  transform: scale(1.1);
+}
+
+.difficulty {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.difficulty img {
+  width: 55px;
+  height: 50px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.difficulty img:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.difficulty img.active {
+  opacity: 1;
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 5px gold);
 }
