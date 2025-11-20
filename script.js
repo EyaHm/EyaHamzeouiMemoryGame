@@ -67,8 +67,45 @@ function createBoard(level = "medium") {
       </div>
     `;
     gameBoard.appendChild(card);
+    card.addEventListener("click",flipCard);
   });
 }
+//Flip logic
+let first = null;
+let second = null;
+let lockBoard = false;
+
+function flipCard() {
+  if (lockBoard) return;        
+  if (this === first) return;      
+  this.classList.add("flip");
+  if (!first) {
+    // Première carte retournée
+    first = this;
+    return;
+  }
+  // Deuxième carte retournée
+  second = this;
+  lockBoard = true;
+  
+  if (first.dataset.name === second.dataset.name) {
+    first.removeEventListner("click",flipCard);
+    second.removeEventListner("click",flipCard);
+    resetBoard();
+  } else {
+    // Pas la même paire, on déflip après un délai
+    setTimeout(() => {
+      first.classList.remove("flip");
+      second.classList.remove("flip");
+      resetBoard();
+    }, 1000);
+  }
+}
+function resetBoard() {
+  [first, second] = [null, null];
+  lockBoard = false;
+}
+
 //Restart
 function restartGame() {
   createBoard(currentLevel);
