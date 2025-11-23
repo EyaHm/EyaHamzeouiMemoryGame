@@ -21,10 +21,20 @@ musicToggle.addEventListener("click", () => {
 const icons = document.querySelectorAll(".difficulty img");
 const gameBoard = document.querySelector(".game-board");
 const restartBtn = document.querySelector(".restart");
+const timerDisplay = document.getElementById("timer");
 let currentLevel = "medium";
 
 //Images
 const images = ["kitty", "turtle", "unicorn", "sun", "fox", "deer", "frog", "squirrel"];
+
+//Game State
+let first, second;
+let lockBoard = false;
+let matchedPairs = 0;
+let totalPairs = 0;
+let timer = null;
+let timeleft = 0;
+let gameStarted = false;
 
 //Difficulty Selector
 icons.forEach((icon) => {
@@ -51,7 +61,10 @@ function createBoard(level = "medium") {
   if (level === "easy") totalPairs = 3; // 6 cards
   else if (level === "hard") totalPairs = 8; // 16 cards
   else totalPairs = 6; // 12 cards
-
+  if (currentLevel === "easy") timeleft = 20;
+  else if (currentLevel === "hard") timeleft = 60; 
+  else timeleft = 40;
+  timerDisplay.textContent=`⏱ 00:${timeleft}`;
   let selected = images.slice(0, totalPairs);
   let cardsArray = [...selected, ...selected].sort(() => Math.random() - 0.5);
 
@@ -70,37 +83,86 @@ function createBoard(level = "medium") {
     card.addEventListener("click",flipCard);
   });
 }
-//Flip logic
-let first = null;
-let second = null;
-let lockBoard = false;
 
+//Timer
+function startTimer() {
+  timer = setInterval(() => {
+    timeleft--;
+    updatetimerdisp();
+    if(timeleft===0){
+      alert("maybe next time");
+      stopTimer();
+      restartGame();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timer);
+}
+function updatetimerdisp(){
+  let min=String(Math.floor(timeleft / 60)).padStart(2, "0");
+  let sec=String(timeleft % 60).padStart(2, "0");
+  timerDisplay.textContent= `⏱ ${min}:${sec}`;
+}
+
+function resetTimer() {
+  stopTimer();
+}
+
+
+//Flip Logic
 function flipCard() {
-  if (lockBoard) return;        
-  if (this === first) return;      
+  if (lockBoard || this === first) return;
+
+  if (!gameStarted) {
+    startTimer();
+    gameStarted = true;
+  }
+
   this.classList.add("flip");
+
   if (!first) {
-    // Première carte retournée
     first = this;
     return;
   }
-  // Deuxième carte retournée
+
   second = this;
-  lockBoard = true;
-  
-  if (first.dataset.name === second.dataset.name) {
-    first.removeEventListner("click",flipCard);
-    second.removeEventListner("click",flipCard);
-    resetBoard();
+  checkMatch();
+}
+
+//Match Logic
+function checkMatch() {
+  const isMatch = first.dataset.name === second.dataset.name;
+  if (isMatch) {
+    matchedPairs++;
+    disable();
+    if (matchedPairs === totalPairs){
+          stopTimer();
+          setTimeout(() => {
+            alert("congratilations")
+          },900);
+        }
   } else {
-    // Pas la même paire, on déflip après un délai
-    setTimeout(() => {
-      first.classList.remove("flip");
-      second.classList.remove("flip");
-      resetBoard();
-    }, 1000);
+    unflip();
   }
 }
+
+function disable() {
+  first.removeEventListener("click", flipCard);
+  second.removeEventListener("click", flipCard);
+  resetBoard();
+}
+
+function unflip() {
+  lockBoard = true;
+  setTimeout(() => {
+    first.classList.remove("flip");
+    second.classList.remove("flip");
+    resetBoard();
+  }, 900);
+}
+
 function resetBoard() {
   [first, second] = [null, null];
   lockBoard = false;
@@ -108,7 +170,11 @@ function resetBoard() {
 
 //Restart
 function restartGame() {
+  matchedPairs=0;
+  gameStarted=false;
+  resetBoard();
   createBoard(currentLevel);
+  resetTimer();
 }
 restartBtn.addEventListener("click", restartGame);
 
