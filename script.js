@@ -89,6 +89,9 @@ function startTimer() {
   timer = setInterval(() => {
     timeleft--;
     updatetimerdisp();
+    if(timeleft<=10){
+      timerDisplay.classList.add("Warning");
+    }
     if(timeleft===0){
       alert("maybe next time");
       stopTimer();
@@ -172,6 +175,7 @@ function resetBoard() {
 function restartGame() {
   matchedPairs=0;
   gameStarted=false;
+  timerDisplay.classList.remove("Warning");
   resetBoard();
   createBoard(currentLevel);
   resetTimer();

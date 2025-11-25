@@ -186,3 +186,17 @@ button.restart:hover {
   transform: scale(1.2);
   filter: drop-shadow(0 0 5px gold);
 }
+.timer{
+  font-size: 1.5em;
+}
+.Warning {
+    color: red;
+    font-weight: bold;
+    font-size: 1.5em;
+    animation: pulse 0.5s ease-in-out infinite alternate;
+    text-shadow: 0 0 10px #ffaa00, 0 0 20px #ff5500;
+}
+@keyframes pulse {
+    from {transform: scale(1) rotate(0deg); }
+    to { transform: scale(1.1) rotate(3deg); }
+}
