@@ -22,6 +22,12 @@ const icons = document.querySelectorAll(".difficulty img");
 const gameBoard = document.querySelector(".game-board");
 const restartBtn = document.querySelector(".restart");
 const timerDisplay = document.getElementById("timer");
+const movesDisplay = document.getElementById("moves");
+const modal = document.getElementById("gameModal");
+const modalContent = document.getElementById("modalContent");
+const modalTitle = document.getElementById("modalTitle");
+const modalMessage = document.getElementById("modalMessage");
+
 let currentLevel = "medium";
 
 //Images
@@ -34,6 +40,7 @@ let matchedPairs = 0;
 let totalPairs = 0;
 let timer = null;
 let timeleft = 0;
+let moves=0;
 let gameStarted = false;
 
 //Difficulty Selector
@@ -82,6 +89,8 @@ function createBoard(level = "medium") {
     gameBoard.appendChild(card);
     card.addEventListener("click",flipCard);
   });
+  movesDisplay.textContent="Moves : 0";
+  timerDisplay.textContent= `⏱ 00:${timeleft}`;
 }
 
 //Timer
@@ -93,9 +102,8 @@ function startTimer() {
       timerDisplay.classList.add("Warning");
     }
     if(timeleft===0){
-      alert("maybe next time");
       stopTimer();
-      restartGame();
+      loseGame();
     }
   }, 1000);
 }
@@ -131,6 +139,8 @@ function flipCard() {
   }
 
   second = this;
+  moves++;
+  movesDisplay.textContent="Moves : "+ moves;
   checkMatch();
 }
 
@@ -142,9 +152,7 @@ function checkMatch() {
     disable();
     if (matchedPairs === totalPairs){
           stopTimer();
-          setTimeout(() => {
-            alert("congratilations")
-          },900);
+          setTimeout(() => winGame(),500);
         }
   } else {
     unflip();
@@ -170,12 +178,33 @@ function resetBoard() {
   [first, second] = [null, null];
   lockBoard = false;
 }
+//Win
+function winGame() {
+    modalTitle.textContent = "🎉";
+    modalMessage.textContent = `You Won! Time remaining: ${timerDisplay.textContent}`;
+    modalContent.classList.remove("lose");
+    modalContent.classList.add("win");
+    modal.classList.add("show");
+
+}
+
+//Lose
+function loseGame() {
+    modalTitle.textContent = "😢";
+    modalMessage.textContent = "Time's Up! Better luck next time!";
+    modalContent.classList.remove("win");
+    modalContent.classList.add("lose");
+    modal.classList.add("show");
+}
+
 
 //Restart
 function restartGame() {
   matchedPairs=0;
   gameStarted=false;
+  moves=0;
   timerDisplay.classList.remove("Warning");
+  modal.classList.remove("show");
   resetBoard();
   createBoard(currentLevel);
   resetTimer();

@@ -18,6 +18,7 @@
   <div class="game-container">
     <header>
       <div class="top-bar">
+        <p class="moves" id="moves">Moves: 0</p>
         <p id="timer" class="timer">⏱</p>
       </div>
 
@@ -34,6 +35,14 @@
       <button class="restart"> Restart</button>
     </footer>
   </div>
+     <!-- Modal -->
+    <div class="modal" id="gameModal">
+        <div class="modal-content" id="modalContent">
+            <h2 id="modalTitle">🎉</h2>
+            <p id="modalMessage"></p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
   <script src="script.js"></script>
 </body>
 </html>
