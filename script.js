@@ -24,6 +24,7 @@ const restartBtn = document.querySelector(".restart");
 const timerDisplay = document.getElementById("timer");
 const movesDisplay = document.getElementById("moves");
 const modal = document.getElementById("gameModal");
+const bestScoresDiv = document.getElementById("bestScores");
 const modalContent = document.getElementById("modalContent");
 const modalTitle = document.getElementById("modalTitle");
 const modalMessage = document.getElementById("modalMessage");
@@ -52,6 +53,58 @@ icons.forEach((icon) => {
     restartGame();
   });
 });
+
+// Best Scores Storage
+function getBestScores() {
+  const scores = localStorage.getItem('memoryGameScores');
+  return scores ? JSON.parse(scores) : { easy: null, medium: null, hard: null };
+}
+
+function calculateScore(moves, timeUsed) {
+  const base = currentLevel === "easy" ? 10 :
+               currentLevel === "medium" ? 25 : 50;
+  const totalTime= currentLevel === "easy" ? 20 :
+                    currentLevel === "medium" ? 40 : 60 ;
+  const timeLeft = totalTime - timeUsed;
+  const efficiency = timeLeft / totalTime;   
+  const accuracy = totalPairs / moves;       
+  const score = Math.round(base * efficiency * accuracy * 100);
+  return score;
+}
+
+function saveBestScore(level, moves, time) {
+  const scores = getBestScores();
+  const newScore = calculateScore(moves, time);
+  
+  if (!scores[level] || newScore > scores[level].score) {
+    scores[level] = { moves, time, score: newScore };
+    localStorage.setItem("memoryGameScores", JSON.stringify(scores));
+    return true;
+  }
+  return false;
+}
+
+function displayBestScores() {
+  const scores = getBestScores();
+  let html = '';
+  
+  for (let level in scores) {
+    if (scores[level]) {
+      html += `
+        <div class="score-item">
+          <span class="score-level">${level}</span>
+          <span class="score-details">${scores[level].moves} moves, ${scores[level].time}s - 
+          <span class="score-value">Score: ${scores[level].score}</span></span>
+        </div>`;
+    }
+  }
+  
+  if (html === '') {
+    html = '<p style="text-align: center; color: #999;">No scores yet. Play to set records!</p>';
+  }
+  
+  bestScoresDiv.innerHTML = html;
+}
 
 //Board Generator
 function createBoard(level = "medium") {
@@ -149,17 +202,23 @@ function checkMatch() {
   const isMatch = first.dataset.name === second.dataset.name;
   if (isMatch) {
     matchedPairs++;
+    first.classList.add("matched");
+    second.classList.add("matched");
     disable();
     if (matchedPairs === totalPairs){
           stopTimer();
           setTimeout(() => winGame(),500);
         }
   } else {
+    first.classList.add("wrong");
+    second.classList.add("wrong");
     unflip();
   }
 }
 
 function disable() {
+  first.classList.remove("wrong");
+  second.classList.remove("wrong");
   first.removeEventListener("click", flipCard);
   second.removeEventListener("click", flipCard);
   resetBoard();
@@ -168,8 +227,8 @@ function disable() {
 function unflip() {
   lockBoard = true;
   setTimeout(() => {
-    first.classList.remove("flip");
-    second.classList.remove("flip");
+    first.classList.remove("flip","wrong");
+    second.classList.remove("flip","wrong");
     resetBoard();
   }, 900);
 }
@@ -180,11 +239,29 @@ function resetBoard() {
 }
 //Win
 function winGame() {
+    const timeUsed = (currentLevel === "easy" ? 20 :
+                      currentLevel === "medium" ? 40 : 60) - timeleft;
+    const finalScore=calculateScore(moves,timeUsed);
+    const isBest = saveBestScore(currentLevel, moves, timeUsed);
+    const scores=getBestScores();
+    const bestScore=scores[currentLevel] ? scores[currentLevel].score : 0;
+
     modalTitle.textContent = "🎉";
-    modalMessage.textContent = `You Won! Time remaining: ${timerDisplay.textContent}`;
+    modalMessage.innerHTML = `You Won! <br>
+     Your Score: <strong>${finalScore}</strong><br>
+     The Highest Score (${currentLevel}:<strong>${bestScore}</strong>)`;
     modalContent.classList.remove("lose");
     modalContent.classList.add("win");
+    const congrats=document.getElementById("congrats");
+    if(isBest){
+      congrats.style.display="block";
+      congrats.classList.add("pop");
+    }else{
+      congrats.style.display="none";
+      congrats.classList.remove("pop");
+    }
     modal.classList.add("show");
+    displayBestScores();
 
 }
 
@@ -213,3 +290,4 @@ restartBtn.addEventListener("click", restartGame);
 
 //Start default
 createBoard("medium");
+displayBestScores();

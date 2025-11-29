@@ -30,14 +30,19 @@
     </header>
 
     <main class="game-board"></main>
-
     <footer >
       <button class="restart"> Restart</button>
     </footer>
-  </div>
-     <!-- Modal -->
+    <!-- Best Scores Section -->
+    <div class="best-scores">
+    <h3>🏆 Best Scores</h3>
+    <div id="bestScores"></div>
+    </div>
+   </div>
+       <!-- Modal -->
     <div class="modal" id="gameModal">
         <div class="modal-content" id="modalContent">
+            <h3 id="congrats" class="congrats">✨NEW HIGH SCORE!✨</h3>
             <h2 id="modalTitle">🎉</h2>
             <p id="modalMessage"></p>
             <button onclick="restartGame()">Play Again</button>
